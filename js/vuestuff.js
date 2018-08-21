@@ -4,7 +4,7 @@ Vue.component('player-card', {
         <div class="card-body">
             <div class="row">
                 <div class="col-9">
-                    <input class="form-control form-control-sm" type="text" placeholder="Name" title="Character name" data-toggle="tooltip" data-placement="top" :value="charname">
+                    <input class="form-control form-control-sm" type="text" placeholder="Character name" title="Character name" data-toggle="tooltip" data-placement="top" :value="charname">
                 </div>
                 <div class="col form-check form-check-inline">
                     <label title="Is this character holding a lantern?" data-toggle="tooltip" data-placement="top">Lantern <input class="form-check-input" type="checkbox" name="lamp_pl1" :checked="haslantern" value="1"></label>
@@ -128,7 +128,7 @@ Vue.component('player-card', {
                             </div>
                         </div>
                     </div>
-                    <textarea class="form-control" placeholder="Spells and abilities" title="Spells and abilities" data-toggle="tooltip" data-placement="top"><slot name="spells">Spells & Abilities</slot></textarea>
+                    <textarea class="form-control" placeholder="Spells and abilities" title="Spells and abilities" data-toggle="tooltip" data-placement="top"><slot name="spells"></slot></textarea>
                 </div>
             </div>
 
@@ -142,7 +142,7 @@ Vue.component('player-card', {
                             </div>
                         </div>
                     </div>
-                    <textarea class="form-control" placeholder="Equipment" title="Equipment" data-toggle="tooltip" data-placement="top"><slot name="equipment">Equipment</slot></textarea>
+                    <textarea class="form-control" placeholder="Equipment" title="Equipment" data-toggle="tooltip" data-placement="top"><slot name="equipment"></slot></textarea>
                 </div>
             </div>
         </div>
@@ -150,8 +150,8 @@ Vue.component('player-card', {
 `,
     data: function () {
         return {
-            'charname': 'Char name',
-            'charclass': 'Class',
+            'charname': null,
+            'charclass': null,
             'haslantern': false,
             'level': null,
             'order': null,

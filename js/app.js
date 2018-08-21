@@ -16,7 +16,10 @@ var lastX,
     rooms = [],
     rotation = 0,
     currentEntry = 0,
-    currentRoom = 0;
+    currentRoom = 0,
+    currentOffset = null,
+    currentMouseEvent = null,
+    coords = {};
 
 for (var i = 0; i < 6; i++) {
     entryRooms[i] = new Image();
@@ -40,6 +43,13 @@ function InitThis() {
                 if (rotation > 3) {
                     rotation = 0;
                 }
+                if (entryAdd) {
+                    coords = getCoords(currentMouseEvent, currentOffset, entryRooms[currentEntry]);
+                    RedrawSprite(ctxSprites, entryRooms[currentEntry]);
+                } else if (roomAdd) {
+                    coords = getCoords(currentMouseEvent, currentOffset, rooms[currentRoom]);
+                    RedrawSprite(ctxSprites, rooms[currentRoom]);
+                }
                 break;
         }
     });
@@ -59,29 +69,23 @@ function InitThis() {
     // show sprite during positioning
     $('#spriteArea').mousemove(function (e) {
         if (entryAdd) {
-            ctxSprites.clearRect(0, 0, 600, 800);
-
-            var coords = getCoords(e, $(this).offset(), entryRooms[currentEntry]);
-            DrawSprite(ctxSprites, entryRooms[currentEntry], coords.x, coords.y, 1, rotationTable[rotation]);
+            coords = getCoords(e, $(this).offset(), entryRooms[currentEntry]);
+            RedrawSprite(ctxSprites, entryRooms[currentEntry]);
         } else if (roomAdd) {
-            ctxSprites.clearRect(0, 0, 600, 800);
-
-            var coords = getCoords(e, $(this).offset(), rooms[currentRoom]);
-            DrawSprite(ctxSprites, rooms[currentRoom], coords.x, coords.y ,1, rotationTable[rotation]);
+            coords = getCoords(e, $(this).offset(), rooms[currentRoom]);
+            RedrawSprite(ctxSprites, rooms[currentRoom]);
         }
     });
 
     // add room/entry to the map
     $('#spriteArea').mousedown(function (e) {
         if (entryAdd) {
-            var coords = getCoords(e, $(this).offset(), entryRooms[currentEntry]);
-            DrawSprite(ctx, entryRooms[currentEntry], coords.x, coords.y, 1, rotationTable[rotation]);
-            ctxSprites.clearRect(0, 0, 600, 800);
+            coords = getCoords(e, $(this).offset(), entryRooms[currentEntry]);
+            RedrawSprite(ctx, entryRooms[currentEntry]);
             entryAdd = false;
         } else if (roomAdd) {
-            var coords = getCoords(e, $(this).offset(), rooms[currentRoom]);
-            DrawSprite(ctx, rooms[currentRoom], coords.x, coords.y, 1, rotationTable[rotation]);
-            ctxSprites.clearRect(0, 0, 600, 800);
+            coords = getCoords(e, $(this).offset(), rooms[currentRoom]);
+            RedrawSprite(ctx, rooms[currentRoom]);
             roomAdd = false;
         }
     });
@@ -102,6 +106,9 @@ function InitThis() {
 }
 
 function getCoords(e, offset, image) {
+    currentMouseEvent = e;
+    currentOffset = offset;
+
     var x = e.pageX - offset.left,
         y = e.pageY - offset.top;
 
@@ -178,7 +185,7 @@ function clearArea() {
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 }
 
-
-function changeTab(tabName) {
-
+function RedrawSprite(context, spriteImage) {
+    ctxSprites.clearRect(0, 0, 600, 800);
+    DrawSprite(context, spriteImage, coords.x, coords.y, 1, rotationTable[rotation]);
 }
