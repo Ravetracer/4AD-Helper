@@ -1,0 +1,18 @@
+.canvasWrapper {
+    position: relative;
+}
+
+canvas {
+    position: absolute;
+    left: 0;
+    top: 0;
+    border: 2px solid black;
+}
+
+.list-group-item {
+    padding: 3px 10px
+}
+
+.input-group-icon-svg {
+    width: 1em;
+}

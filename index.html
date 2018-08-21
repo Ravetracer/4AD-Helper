@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Canvas Tests</title>
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/vue.min.js"></script>
+</head>
+<body>
+
+    <div class="container-fluid" id="fourAdApp">
+        <div class="row">
+            <div class="col-4" id="canvasWrapper">
+                <canvas id="gridArea" width="600" height="800"></canvas>
+                <canvas id="testArea" width="600" height="800"></canvas>
+                <canvas id="spriteArea" width="600" height="800"></canvas>
+            </div>
+
+            <div class="col">
+                <!-- notes -->
+                <div class="row">
+                    <div class="col">
+                        <textarea class="form-control" placeholder="Notes / Encounters" rows="3" title="Notes / Encounters" data-toggle="tooltip" data-placement="bottom"></textarea>
+                    </div>
+                </div>
+
+                <!-- minions and bosses -->
+                <div class="row">
+                    <div class="col">
+                        <div class="row">
+                            <div class="col-2">
+                                <p>Minions: </p>
+                            </div>
+                            <div class="col">
+                                <div class="form-check form-check-inline">
+                                    <span v-for="n in 11">
+                                        <label>{{ n-1 }} <input class="form-check-input" name="minions" type="radio" :value="n-1"></label>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="row">
+                            <div class="col-2">
+                                <p>Boss/Weird: </p>
+                            </div>
+                            <div class="col">
+                                <div class="form-check form-check-inline">
+                                    <span v-for="n in 6">
+                                        <label>{{ n-1 }} <input class="form-check-input" name="boss" type="radio" :value="n-1"></label>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- heros -->
+                <div class="row">
+                    <div class="col-6">
+                        <player-card></player-card>
+                    </div>
+                    <div class="col-6">
+                        <player-card></player-card>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-6">
+                        <player-card></player-card>
+                    </div>
+                    <div class="col-6">
+                        <player-card></player-card>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-4">
+                <ul class="nav">
+                    <li class="nav-item">
+                        <label>Entry room
+                            <select id="entryRoom">
+                                <option v-for="(value, key) in entryRooms" :value="key">{{ value }}</option>
+                            </select>
+                        </label>
+                        <button class="btn btn-secondary btn-sm" id="addEntry">Add</button>
+                    </li>
+                    <li class="nav-item">
+                        <label>Room
+                            <select id="room">
+                                <option v-for="(value, key) in stdRooms" :value="key">{{ value }}</option>
+                            </select>
+                            <button class="btn btn-secondary btn-sm" id="addRoom">Add</button>
+                        </label>
+                    </li>
+                    <li class="nav-item">&nbsp;</li>
+                    <li class="nav-item ml-5">
+                        <button class="btn btn-primary" id="showTables" data-toggle="modal" data-target="#tableModal">Tables</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- modal dialog for tables -->
+        <div class="modal fade" id="tableModal" tabindex="-1" role="dialog" aria-labelledby="tableModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="tableModalLabel">Tables</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+
+                        <ul class="nav nav-tabs" id="tableTabs" role="tablist">
+                            <li v-for="(tvalue, tkey, index) in tables" class="nav-item">
+                                <a class="nav-link" :class="{ active: index === 0 }" :id="tkey" data-toggle="tab" :href="'#tab-' + tkey" role="tab" :aria-controls="'tab-' + tkey" aria-selected="true">{{ tvalue.title }}</a>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content" id="tab-contents">
+                            <div v-for="(tvalue, tkey, index) in tables" class="tab-pane fade" :class="{ show: index === 0, active: index === 0 }" :id="'tab-' + tkey" :aria-labelledby="tkey">
+                                <table class="table table-striped table-bordered">
+                                    <thead class="thead-dark">
+                                        <tr>
+                                            <th>&nbsp;</th>
+                                            <th>{{ tvalue.title }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="row in tvalue.rows">
+                                            <td><strong>{{ row[0] }}</strong></td>
+                                            <td v-html="row[1]"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <p v-if="tvalue.additional" v-html="tvalue.additional"></p>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script src="js/vuestuff.js"></script>
+</body>
+</html>
