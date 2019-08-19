@@ -19,7 +19,9 @@ var lastX,
     currentRoom = 0,
     currentOffset = null,
     currentMouseEvent = null,
-    coords = {};
+    coords = {},
+    mirrorX = 1,
+    mirrorY = 1;
 
 for (var i = 0; i < 6; i++) {
     entryRooms[i] = new Image();
@@ -43,6 +45,30 @@ function InitThis() {
                 if (rotation > 3) {
                     rotation = 0;
                 }
+                if (entryAdd) {
+                    coords = getCoords(currentMouseEvent, currentOffset, entryRooms[currentEntry]);
+                    RedrawSprite(ctxSprites, entryRooms[currentEntry]);
+                } else if (roomAdd) {
+                    coords = getCoords(currentMouseEvent, currentOffset, rooms[currentRoom]);
+                    RedrawSprite(ctxSprites, rooms[currentRoom]);
+                }
+                break;
+
+            case 120:
+                console.log('mirrored X: ', mirrorX);
+                mirrorX = -mirrorX;
+                if (entryAdd) {
+                    coords = getCoords(currentMouseEvent, currentOffset, entryRooms[currentEntry]);
+                    RedrawSprite(ctxSprites, entryRooms[currentEntry]);
+                } else if (roomAdd) {
+                    coords = getCoords(currentMouseEvent, currentOffset, rooms[currentRoom]);
+                    RedrawSprite(ctxSprites, rooms[currentRoom]);
+                }
+                break;
+
+            case 121:
+                console.log('mirrored Y: ', mirrorY);
+                mirrorY = -mirrorY;
                 if (entryAdd) {
                     coords = getCoords(currentMouseEvent, currentOffset, entryRooms[currentEntry]);
                     RedrawSprite(ctxSprites, entryRooms[currentEntry]);
@@ -116,21 +142,33 @@ function getCoords(e, offset, image) {
         case 0:
             x -= image.width / 2;
             y -= image.height / 2;
+
+            x += mirrorX === -1 ? image.width : 0;
+            y += mirrorY === -1 ? image.width * 2 : 0;
             break;
 
         case 1:
             x += image.height / 2;
             y -= image.width / 2;
+
+            x -= mirrorX === -1 ? image.width * 2 : 0;
+            y += mirrorY === -1 ? image.width : 0;
             break;
 
         case 2:
             x += image.width / 2;
             y += image.height / 2;
+
+            x -= mirrorX === -1 ? image.width : 0;
+            y -= mirrorY === -1 ? image.height: 0;
             break;
 
         case 3:
             x -= image.height / 2;
             y += image.width / 2;
+
+            x += mirrorX === -1 ? image.height : 0;
+            y -= mirrorY === -1 ? image.width : 0;
             break;
     }
 
@@ -140,11 +178,11 @@ function getCoords(e, offset, image) {
     };
 }
 
-function DrawSprite(context, image, x, y, scale, rotation) {
+function DrawSprite(context, image, x, y, scaleX, scaleY, rotation) {
     var xCoord = Math.round(x / 20) * 20,
         yCoord = Math.round(y / 20) * 20;
 
-    context.setTransform(scale, 0, 0, scale, xCoord, yCoord); // sets scale and origin
+    context.setTransform(scaleX, 0, 0, scaleY, xCoord, yCoord); // sets scale and origin
     context.rotate(rotation);
     context.drawImage(image, 0, 0);
 }
@@ -187,5 +225,5 @@ function clearArea() {
 
 function RedrawSprite(context, spriteImage) {
     ctxSprites.clearRect(0, 0, 600, 800);
-    DrawSprite(context, spriteImage, coords.x, coords.y, 1, rotationTable[rotation]);
+    DrawSprite(context, spriteImage, coords.x, coords.y, mirrorX, mirrorY, rotationTable[rotation]);
 }
